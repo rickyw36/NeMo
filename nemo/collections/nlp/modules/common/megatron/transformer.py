@@ -1723,7 +1723,7 @@ class ParallelTransformer(MegatronModule):
         self.transformer_block_type = transformer_block_type
         self.position_embedding_type = position_embedding_type
         self.apply_query_key_scaling = apply_query_key_layer_scaling
-        if self.apply_query_key_layer_scaling:
+        if self.apply_query_key_scaling:
             self.attention_softmax_in_fp32 = True
 
         self.activations_checkpoint_method = activations_checkpoint_method
