@@ -18,6 +18,7 @@ from nemo_text_processing.text_normalization.en.graph_utils import (
     NEMO_DIGIT,
     NEMO_LOWER,
     NEMO_SIGMA,
+    NEMO_NOT_QUOTE,
     TO_LOWER,
     GraphFst,
     delete_extra_space,
@@ -159,7 +160,7 @@ class DateFst(GraphFst):
             for False multiple transduction are generated (used for audio-based normalization)
     """
 
-    def __init__(self, cardinal: GraphFst, deterministic: bool, lm: bool = False):
+    def __init__(self, cardinal: GraphFst, deterministic: bool, lm: bool = False, replace_oh = False, add_and = True):
         super().__init__(name="date", kind="classify", deterministic=deterministic)
 
         # january
@@ -183,7 +184,10 @@ class DateFst(GraphFst):
         cardinal_graph = cardinal.graph_hundred_component_at_least_one_none_zero_digit
 
         year_graph = _get_year_graph(cardinal_graph=cardinal_graph, deterministic=deterministic)
-
+        if replace_oh:
+            year_graph = self.replace_oh(year_graph)
+        if add_and:
+            year_graph = cardinal.add_optional_and(year_graph)
         # three_digit_year = (NEMO_DIGIT @ cardinal_graph) + insert_space + (NEMO_DIGIT ** 2) @ cardinal_graph
         # year_graph |= three_digit_year
 
@@ -366,3 +370,10 @@ class DateFst(GraphFst):
 
         final_graph = self.add_tokens(final_graph)
         self.fst = final_graph.optimize()
+
+    # replace all oh by o
+    def replace_oh(self, graph):
+        not_quote = pynini.closure(NEMO_NOT_QUOTE)
+        o_graph = pynini.closure(not_quote) + pynini.cross('oh','o') + pynini.closure(not_quote)
+        graph = pynini.compose(graph,o_graph)
+        return graph   
