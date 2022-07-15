@@ -26,7 +26,10 @@ from nemo_text_processing.text_normalization.en.verbalizers.roman import RomanFs
 from nemo_text_processing.text_normalization.en.verbalizers.telephone import TelephoneFst
 from nemo_text_processing.text_normalization.en.verbalizers.time import TimeFst
 from nemo_text_processing.text_normalization.en.verbalizers.whitelist import WhiteListFst
-
+from nemo_text_processing.text_normalization.en.verbalizers.interjection import InterjectionFst
+from nemo_text_processing.text_normalization.en.verbalizers.accent import AccentFst
+from nemo_text_processing.text_normalization.en.verbalizers.subs import SubstituteFst
+from nemo_text_processing.text_normalization.en.verbalizers.symbol import SymbolFst
 
 class VerbalizeFst(GraphFst):
     """
@@ -57,7 +60,10 @@ class VerbalizeFst(GraphFst):
         date_graph = DateFst(ordinal=ordinal, deterministic=deterministic).fst
         money_graph = MoneyFst(decimal=decimal, deterministic=deterministic).fst
         whitelist_graph = WhiteListFst(deterministic=deterministic).fst
-
+        interjection_graph = InterjectionFst(deterministic=deterministic).fst 
+        acc_graph = AccentFst(deterministic=deterministic).fst 
+        subs_graph = SubstituteFst(deterministic=deterministic).fst 
+        symbol_graph = SymbolFst(deterministic=deterministic).fst 
         graph = (
             time_graph
             | date_graph
@@ -70,6 +76,10 @@ class VerbalizeFst(GraphFst):
             | electronic_graph
             | fraction_graph
             | whitelist_graph
+            | interjection_graph
+            | acc_graph
+            | subs_graph
+            | symbol_graph
         )
 
         roman_graph = RomanFst(deterministic=deterministic).fst
