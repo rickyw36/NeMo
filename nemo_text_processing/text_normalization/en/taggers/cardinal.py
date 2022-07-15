@@ -86,9 +86,8 @@ class CardinalFst(GraphFst):
 
         self.graph = graph
         self.graph_with_and = self.add_optional_and(graph)
-
         if deterministic:
-            long_numbers = pynini.compose(NEMO_DIGIT ** (5, ...), self.single_digits_graph).optimize()
+            long_numbers = pynini.compose(NEMO_DIGIT ** (7, ...), self.single_digits_graph).optimize()
             final_graph = plurals._priority_union(long_numbers, self.graph_with_and, NEMO_SIGMA).optimize()
             cardinal_with_leading_zeros = pynini.compose(
                 pynini.accep("0") + pynini.closure(NEMO_DIGIT), self.single_digits_graph
@@ -108,10 +107,11 @@ class CardinalFst(GraphFst):
                 | pynutil.add_weight(single_digits_graph_with_commas, 0.0001)
                 | cardinal_with_leading_zeros
             )
-
+        
         final_graph = optional_minus_graph + pynutil.insert("integer: \"") + final_graph + pynutil.insert("\"")
         final_graph = self.add_tokens(final_graph)
         self.fst = final_graph.optimize()
+
 
     def add_optional_and(self, graph):
         if not self.deterministic:
@@ -133,5 +133,6 @@ class CardinalFst(GraphFst):
         ).optimize()
 
         graph_with_and = pynini.compose(graph, integer).optimize() | pynutil.add_weight(graph, 0.00001)
-
         return graph_with_and
+    
+    

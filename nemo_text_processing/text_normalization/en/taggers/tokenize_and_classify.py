@@ -40,9 +40,14 @@ from nemo_text_processing.text_normalization.en.taggers.telephone import Telepho
 from nemo_text_processing.text_normalization.en.taggers.time import TimeFst
 from nemo_text_processing.text_normalization.en.taggers.whitelist import WhiteListFst
 from nemo_text_processing.text_normalization.en.taggers.word import WordFst
+from nemo_text_processing.text_normalization.en.taggers.interjection import InterjectionFst
+from nemo_text_processing.text_normalization.en.taggers.accent import AccentFst
+from nemo_text_processing.text_normalization.en.taggers.subs import SubstituteFst
+from nemo_text_processing.text_normalization.en.taggers.symbol import SymbolFst
 from nemo_text_processing.text_normalization.en.verbalizers.date import DateFst as vDateFst
 from nemo_text_processing.text_normalization.en.verbalizers.ordinal import OrdinalFst as vOrdinalFst
 from nemo_text_processing.text_normalization.en.verbalizers.time import TimeFst as vTimeFst
+
 from pynini.lib import pynutil
 
 from nemo.utils import logging
@@ -149,6 +154,22 @@ class ClassifyFst(GraphFst):
             start_time = time.time()
             serial_graph = SerialFst(cardinal=cardinal, ordinal=ordinal, deterministic=deterministic).fst
             logging.debug(f"serial: {time.time() - start_time: .2f}s -- {serial_graph.num_states()} nodes")
+            
+            start_time = time.time()
+            inter_graph = InterjectionFst(deterministic=deterministic).fst
+            logging.debug(f"serial: {time.time() - start_time: .2f}s -- {serial_graph.num_states()} nodes")
+
+            start_time = time.time()
+            acc_graph = AccentFst(deterministic=deterministic).fst
+            logging.debug(f"serial: {time.time() - start_time: .2f}s -- {serial_graph.num_states()} nodes")
+
+            start_time = time.time()
+            subs_graph = SubstituteFst(deterministic=deterministic).fst
+            logging.debug(f"serial: {time.time() - start_time: .2f}s -- {serial_graph.num_states()} nodes")
+
+            start_time = time.time()
+            symbol_graph = SymbolFst(deterministic=deterministic).fst
+            logging.debug(f"serial: {time.time() - start_time: .2f}s -- {serial_graph.num_states()} nodes")
 
             start_time = time.time()
             v_time_graph = vTimeFst(deterministic=deterministic).fst
@@ -174,12 +195,15 @@ class ClassifyFst(GraphFst):
                 | pynutil.add_weight(electonic_graph, 1.1)
                 | pynutil.add_weight(fraction_graph, 1.1)
                 | pynutil.add_weight(range_graph, 1.1)
-                | pynutil.add_weight(serial_graph, 1.1001)  # should be higher than the rest of the classes
+                | pynutil.add_weight(serial_graph, 1.102)# should be higher than the rest of the classes
+                | pynutil.add_weight(inter_graph, 1.101) 
+                | pynutil.add_weight(acc_graph, 1.1)  
+                | pynutil.add_weight(subs_graph, 1.099)
+                | pynutil.add_weight(symbol_graph, 1.1)
             )
 
             roman_graph = RomanFst(deterministic=deterministic).fst
             classify |= pynutil.add_weight(roman_graph, 1.1)
-
             if not deterministic:
                 abbreviation_graph = AbbreviationFst(deterministic=deterministic).fst
                 classify |= pynutil.add_weight(abbreviation_graph, 100)

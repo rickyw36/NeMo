@@ -56,16 +56,16 @@ class WhiteListFst(GraphFst):
                 whitelist = [[x.lower(), y] for x, y in whitelist]
             else:
                 whitelist = [[x, y] for x, y in whitelist]
-
             if keep_punct_add_end:
                 whitelist.extend(augment_labels_with_punct_at_end(whitelist))
-
+                
             graph = pynini.string_map(whitelist)
             return graph
 
         graph = _get_whitelist_graph(input_case, get_abs_path("data/whitelist/tts.tsv"))
         graph |= _get_whitelist_graph(input_case, get_abs_path("data/whitelist/symbol.tsv"))
-
+        ############################## add some accent case ################################
+        graph |= _get_whitelist_graph(input_case, get_abs_path("data/whitelist/accent.tsv"))
         if deterministic:
             names = get_names()
             graph |= (
