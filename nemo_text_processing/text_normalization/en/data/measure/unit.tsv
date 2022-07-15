@@ -1,11 +1,8 @@
 amu	atomic mass unit
 bar	bar
 °	degree
-º	degree
 °c	degree Celsius
 °C	degree Celsius
-ºc	degree Celsius
-ºC	degree Celsius
 ℃	degree Celsius
 cm2	square centimeter
 cm²	square centimeter
@@ -53,6 +50,7 @@ mi²	square mile
 mi	mile
 min	minute
 ml	milliliter
+mm	millimeter
 mm2	square millimeter
 mm²	square millimeter
 mol	mole
@@ -109,7 +107,6 @@ mb	MB
 mc	MC
 mf	MF
 m	M
-mm	MM
 ms	MS
 mv	MV
 mw	MW
